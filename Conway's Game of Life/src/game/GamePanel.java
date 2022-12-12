@@ -10,13 +10,24 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+enum State {
+	PLAYING,
+	PAUSED;
+}
+
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel{
 
-	private Logic logic;
 	private final int cellSize = 10;
-
-	int width, height;
+	
+	private Logic logic;
+	
+	private State state;
+	
+	private Timer timer;
+	private int delay; // number between 30 and 300
+	
+	private int width, height;
 	
 	public GamePanel(int width,int height){
 		this.width = width/cellSize * cellSize;
@@ -29,7 +40,9 @@ public class GamePanel extends JPanel{
 	public void startGameThread() {
 		
 		logic.set_board();
-		Timer timer = new Timer(100, new ActionListener() {
+		state = State.PLAYING;
+		delay = 165;
+		timer = new Timer(delay, new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -42,14 +55,40 @@ public class GamePanel extends JPanel{
 		timer.start();
 	}
 	
-	void update() {
+	public boolean changeState() {
+		// return boolean to change button icon
+		// true for playing
+		// false for paused
+		
+		if(state == State.PLAYING) {
+			state = State.PAUSED;
+			return true;
+		}
+		else {
+			state = State.PLAYING;
+			return false;
+		}
+	}
+	
+	public void changeDelay(int number) {
+		delay = number;
+		timer.setDelay(delay);
+	}
+	
+	public void restart() {
+		logic.set_board();
+	}
+	
+	private void update() {
+		if(state == State.PAUSED)
+			return;
 		logic.update();
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+			
 		Graphics2D g2 = (Graphics2D)g;
 		
 		g2.setColor(Color.white);

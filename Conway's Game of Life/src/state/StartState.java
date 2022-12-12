@@ -1,22 +1,21 @@
 package state;
 
 import java.awt.Color;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
 import main.MyFrame;
 
 @SuppressWarnings("serial")
-public class StartState extends BaseState implements MouseListener{
+public class StartState extends BaseState implements ActionListener{
 	
 	private JButton start_button;
 	private JButton rules_button;
 
 	public StartState(MyFrame master) {
 		super(master);
-		
 		
 		width = 420;
 		height = 420;
@@ -31,12 +30,12 @@ public class StartState extends BaseState implements MouseListener{
 		add(start_button);
 		add(rules_button);
 		
-		start_button.addMouseListener(this);
-		rules_button.addMouseListener(this);
+		start_button.addActionListener(this);
+		rules_button.addActionListener(this);
 	}
-	
+
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == start_button) {
 			master.stateChanged(State.GAME_STATE);
 		}
@@ -45,18 +44,6 @@ public class StartState extends BaseState implements MouseListener{
 		}
 		
 	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {}
-
-	@Override
-	public void mouseExited(MouseEvent e) {}
 	
 	
 
