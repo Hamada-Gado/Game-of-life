@@ -5,10 +5,14 @@ public enum State {
 	GAME_STATE("GAME"),
 	RULES_STATE("RULES");
 	
-	public String value;
+	private String value;
 	
 	State(String value){
 		this.value = value;	
+	}
+
+	public String getValue() {
+		return value;
 	}
 	
 }

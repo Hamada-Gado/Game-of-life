@@ -25,21 +25,23 @@ public class GamePanel extends JPanel{
 	private State state;
 	
 	private Timer timer;
-	private int delay; // number between 30 and 300
+	private int delay;
 	
 	private int width, height;
 	
 	public GamePanel(int width,int height){
+		// divide then multiply by cellSize so that if width or height is not divisible by cellSize
+		// screen is does not have extra space around it
+		
 		this.width = width/cellSize * cellSize;
 		this.height = height/cellSize * cellSize;
 		logic = new Logic(this.width/cellSize, this.height/cellSize);
 		
-		this.setPreferredSize(new Dimension(this.width, this.height));
 	}
 	
 	public void startGameThread() {
 		
-		logic.set_board();
+		logic.set();
 		state = State.PLAYING;
 		delay = 165;
 		timer = new Timer(delay, new ActionListener() {
@@ -53,6 +55,7 @@ public class GamePanel extends JPanel{
 		});
 
 		timer.start();
+		setPreferredSize(new Dimension(this.width, this.height));
 	}
 	
 	public boolean changeState() {
@@ -76,7 +79,16 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void restart() {
-		logic.set_board();
+		logic.reset();
+	}
+	
+	public void newGeneration() {
+		logic.set();
+		
+	}
+	
+	public Cell[][] originalGeneration() {
+		return logic.original_generation;
 	}
 	
 	private void update() {
@@ -98,7 +110,7 @@ public class GamePanel extends JPanel{
 		
 		for(int x = 0; x < logic.cols; x++) {
 			for(int y = 0; y < logic.rows; y++) {	
-				if(logic.current_board[x][y] == Cell.ALIVE)
+				if(logic.current_generation[x][y] == Cell.ALIVE)
 					g2.fillRect(x*cellSize, y*cellSize, cellSize - 1, cellSize - 1);
 			}
 		}

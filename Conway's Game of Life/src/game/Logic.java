@@ -4,67 +4,86 @@ import java.util.Random;
 
 public class Logic {
 	
-	// simply pointers to which board to use
-	Cell[][] current_board;
-	Cell[][] other_board;
+	// simply pointers to which generation to use
+	Cell[][] current_generation;
+	private Cell[][] other_generation;
 	
-	// change between boards so cells are not affected be the change of its neighbors
-	Cell[][] board1;
-	Cell[][] board2;
+	// change between generations so cells are not affected be the change of its neighbors
+	private Cell[][] generation1;
+	private Cell[][] generation2;
+	
+	Cell[][] original_generation;
 
-	final int cols, rows;
+	int cols, rows;
 	private Random randGen;
 
 	Logic(int cols, int rows){
 		this.cols = cols;
 		this.rows = rows;
-		current_board = new Cell[cols][rows];
-		other_board = new Cell[cols][rows];
-		board1 = new Cell[cols][rows];
-		board2 = new Cell[cols][rows];
+		
+		current_generation = new Cell[cols][rows];
+		other_generation = new Cell[cols][rows];
+		generation1 = new Cell[cols][rows];
+		generation2 = new Cell[cols][rows];
+		original_generation = new Cell[cols][rows];
+		
 		randGen = new Random();
 	}
-
-	void set_board() {
+	
+	void set() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
-				if(randGen.nextInt(0, 8) == 0) {
-					board1[x][y] = Cell.ALIVE;
-					board2[x][y] = Cell.ALIVE;
+				if(randGen.nextInt(0, 6) == 0) {
+					generation1[x][y] = Cell.ALIVE;
+					generation2[x][y] = Cell.ALIVE;
+					original_generation[x][y] = Cell.ALIVE;
 				}
 				else {
-					board1[x][y] = Cell.DEAD;
-					board2[x][y] = Cell.DEAD;				
+					generation1[x][y] = Cell.DEAD;
+					generation2[x][y] = Cell.DEAD;				
+					original_generation[x][y] = Cell.DEAD;
 				}
 			}
 		
-		current_board = board1;
-		other_board = board2;
+		current_generation = generation1;
+		other_generation = generation2;
+	}
+	
+	void reset() {
+		for(int x = 0; x < cols; x++)
+			for(int y = 0; y < rows; y++) {
+					generation1[x][y] = original_generation[x][y];
+					generation2[x][y] = original_generation[x][y];
+			}
+		
+		current_generation = generation1;
+		other_generation = generation2;
 	}
 	
 	void update() {
-		int neighbours;
+		int neighbors;
 		for(int x = 0; x < cols; x++) {
 			for(int y = 0; y < rows; y++) {
-				neighbours = number_of_neighbours(x, y);
-				if(current_board[x][y] == Cell.ALIVE && (neighbours < 2 || neighbours > 3)) {
-					other_board[x][y] = Cell.DEAD;
+				neighbors = number_of_neighbors(x, y);
+				
+				if(current_generation[x][y] == Cell.ALIVE && (neighbors < 2 || neighbors > 3)) {
+					other_generation[x][y] = Cell.DEAD;
 				}
-				else if(current_board[x][y] == Cell.DEAD && neighbours == 3){
-					other_board[x][y] = Cell.ALIVE;
+				else if(current_generation[x][y] == Cell.DEAD && neighbors == 3){
+					other_generation[x][y] = Cell.ALIVE;
 				}
 				else {
-					other_board[x][y] = current_board[x][y];
+					other_generation[x][y] = current_generation[x][y];
 				}
 			}
 		}
 		
-		current_board = (current_board == board1) ? board2 : board1;
-		other_board = (current_board == board1) ? board2 : board1;
+		current_generation = (current_generation == generation1) ? generation2 : generation1;
+		other_generation = (current_generation == generation1) ? generation2 : generation1;
 		
 	}
 	
-	int number_of_neighbours(int x, int y) {
+	int number_of_neighbors(int x, int y) {
 		
 		int sum = 0;
 		int col, row;
@@ -75,7 +94,7 @@ public class Logic {
 				row = (y + j + rows) % rows;
 				if(col == x && row == y)
 					continue;
-				sum += current_board[col][row].value;
+				sum += current_generation[col][row].getValue();
 			}
 		}		
 		return sum;

@@ -38,13 +38,13 @@ public class MyFrame extends JFrame {
 		// Add panels to card to control panels and change them
 		current_state = new JPanel(new CardLayout());
 		for(State s : my_states.keySet()) {
-			current_state.add(my_states.get(s), s.value);
+			current_state.add(my_states.get(s), s.getValue());
 		}
 		cl = (CardLayout) current_state.getLayout();
 		
 		// show first panel
 		my_states.get(State.START_STATE).get_ready();
-		cl.show(current_state, State.START_STATE.value);
+		cl.show(current_state, State.START_STATE.getValue());
 
 		// to exit the application click escape
 		addKeyListener(new KeyListener() {
@@ -78,7 +78,7 @@ public class MyFrame extends JFrame {
 		next_state.get_ready();
 		
 		current_state.setPreferredSize(new Dimension(next_state.width, next_state.height));
-		cl.show(current_state, state.value);
+		cl.show(current_state, state.getValue());
 		
 		pack();
 	}
