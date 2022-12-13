@@ -1,5 +1,6 @@
 package game;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Logic {
@@ -30,7 +31,53 @@ public class Logic {
 		randGen = new Random();
 	}
 	
-	void set() {
+	void newGeneration(String alive, String dead, String delimiter, String data) {
+		// TODO debug 'rowSplit sometimes last char is \n'
+		
+		System.out.println(data);
+		
+		String[] colSplit = data.split("\n");
+		String[] rowSplit = colSplit[0].split(delimiter);
+		
+		Cell[][] gen1 = new Cell[colSplit.length][rowSplit.length];
+		Cell[][] gen2 = new Cell[colSplit.length][rowSplit.length];
+		Cell[][] ogGen = new Cell[colSplit.length][rowSplit.length];
+		
+		for(int x = 0; x < colSplit.length; x++) {
+			rowSplit = colSplit[x].split(delimiter);
+			for(int y = 0; y < rowSplit.length-1; y++){
+//				System.out.println(rowSplit[y] + "end");
+				if(rowSplit[y].equals(alive)) {
+					gen1[x][y] = Cell.ALIVE;
+					gen2[y][y] = Cell.ALIVE;
+					ogGen[x][y] = Cell.ALIVE;
+				}
+				else if(rowSplit[y].equals(dead)) {
+					gen1[x][y] = Cell.DEAD;
+					gen2[y][y] = Cell.DEAD;
+					ogGen[x][y] = Cell.DEAD;	
+				}
+				else {
+					System.out.println(Arrays.toString(rowSplit));
+					System.out.println(y + rowSplit[y] + "end");
+					// TODO throw exception as the file is not formatted correctly
+					System.err.println("not alive not dead what am i?");
+				}
+			}
+		}
+		
+		cols = colSplit.length;
+		rows = rowSplit.length-1;
+		
+		generation1 = gen1;
+		generation2 = gen2;
+		original_generation = ogGen;
+		
+		current_generation = generation1;
+		other_generation = generation2;
+	}
+	
+	void newGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
 				if(randGen.nextInt(0, 6) == 0) {
@@ -49,7 +96,7 @@ public class Logic {
 		other_generation = generation2;
 	}
 	
-	void reset() {
+	void resetGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
 					generation1[x][y] = original_generation[x][y];

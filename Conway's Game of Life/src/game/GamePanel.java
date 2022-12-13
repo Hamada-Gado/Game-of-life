@@ -41,7 +41,7 @@ public class GamePanel extends JPanel{
 	
 	public void startGameThread() {
 		
-		logic.set();
+		logic.newGeneration();
 		state = State.PLAYING;
 		delay = 165;
 		timer = new Timer(delay, new ActionListener() {
@@ -55,7 +55,9 @@ public class GamePanel extends JPanel{
 		});
 
 		timer.start();
-		setPreferredSize(new Dimension(this.width, this.height));
+		
+		setPreferredSize(new Dimension(width, height));
+		setSize(getPreferredSize());
 	}
 	
 	public boolean changeState() {
@@ -78,17 +80,32 @@ public class GamePanel extends JPanel{
 		timer.setDelay(delay);
 	}
 	
-	public void restart() {
-		logic.reset();
+	public void restartGeneration() {
+		logic.resetGeneration();
 	}
 	
-	public void newGeneration() {
-		logic.set();
+	public void newGeneration() {		
+		logic.newGeneration();
 		
 	}
 	
-	public Cell[][] originalGeneration() {
-		return logic.original_generation;
+	public void newGeneration(String alive, String dead, String delimiter, String data) {
+
+//		System.out.println(getSize());
+		logic.newGeneration(alive, dead, delimiter, data);
+		
+		width = logic.cols * cellSize;
+		height = logic.rows * cellSize;
+		System.out.println(height);
+		
+		setPreferredSize(new Dimension(this.width, this.height));
+		setSize(getPreferredSize());
+		
+//		System.out.println(getSize());
+	}
+	
+	public Cell[][] getCurrentGeneration() {
+		return logic.current_generation;
 	}
 	
 	private void update() {
