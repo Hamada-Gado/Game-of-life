@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -33,16 +32,15 @@ public class GameState extends BaseState{
 	
 	private final int delayMin = 20, delayMax = 400;
 	
+	private final int GAME_STARTING_WIDTH = 500, GAME_STARTING_HEIGHT = 500;
+	
 	public GameState(MyFrame master) {
 		super(master);
 	
 		setLayout(new FlowLayout());
 		setBackground(Color.gray);
 		
-		int game_width = 500;
-		int game_height = 500;
-		
-		game_panel = new GamePanel(game_width, game_height);
+		game_panel = new GamePanel(GAME_STARTING_WIDTH, GAME_STARTING_HEIGHT);
 
 		utilites = new JPanel(new GridBagLayout());
 
@@ -141,15 +139,15 @@ public class GameState extends BaseState{
 		
 		utilites.setSize(getPreferredSize());
 		
-		width = Math.max(500, utilites.getWidth());
-		height = 500 + utilites.getHeight();
+		width = Math.max(GAME_STARTING_WIDTH, utilites.getWidth());
+		height = GAME_STARTING_HEIGHT + utilites.getHeight();
 	}
 
 	@Override
 	public void get_ready() {
 		super.get_ready();
 		
-		game_panel.startGameThread();
+		game_panel.startGame();
 	}
 	
 	private String[] getAliveDeadDelimiterValues() {
@@ -157,7 +155,7 @@ public class GameState extends BaseState{
 		String alive, dead, delimiter;
 	
 		// keep asking for response until exactly one character is given
-		// if canceled, exited, or pressed ok without input. set values to a default 
+		// if canceled, exited, or pressed OK without input. set values to a default 
 		while(( alive = JOptionPane.showInputDialog("Enter a character for alive cells: ")) != null  && (alive.length() > 1));
 		alive = (alive == null || alive.length() == 0) ? "" + Cell.ALIVE.getValue() : alive;
 		
@@ -166,8 +164,7 @@ public class GameState extends BaseState{
 		
 		while(( delimiter = JOptionPane.showInputDialog("Enter a character for delimiter: ")) != null && (delimiter.length() > 1 || delimiter.equals(alive) || delimiter.equals(dead)));
 		delimiter = (delimiter == null || delimiter.length() == 0) ? " " : delimiter;
-	
-		System.out.println(alive + dead + delimiter);
+
 		return new String[] {alive, dead, delimiter};
 	}
 	
@@ -198,11 +195,6 @@ public class GameState extends BaseState{
 		}
 		
 		game_panel.newGeneration(alive, dead, delimiter, strData);
-	
-		width = Math.max(game_panel.getWidth(), utilites.getWidth());
-		height = game_panel.getHeight() + utilites.getHeight();
-		
-		setPreferredSize(new Dimension(width, height));
 	}
 	
 	private void saveOriginalGeneration() {

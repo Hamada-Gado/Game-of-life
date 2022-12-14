@@ -3,6 +3,8 @@ package game;
 import java.util.Arrays;
 import java.util.Random;
 
+import debug.Debug;
+
 public class Logic {
 	
 	// simply pointers to which generation to use
@@ -32,11 +34,8 @@ public class Logic {
 	}
 	
 	void newGeneration(String alive, String dead, String delimiter, String data) {
-		// TODO debug 'rowSplit sometimes last char is \n'
-		
-		System.out.println(data);
-		
-		String[] colSplit = data.split("\n");
+
+		String[] colSplit = data.split("(\n)|(\r\n)"); // \n or \r\n to work one any os or manually typed patterns
 		String[] rowSplit = colSplit[0].split(delimiter);
 		
 		Cell[][] gen1 = new Cell[colSplit.length][rowSplit.length];
@@ -46,7 +45,6 @@ public class Logic {
 		for(int x = 0; x < colSplit.length; x++) {
 			rowSplit = colSplit[x].split(delimiter);
 			for(int y = 0; y < rowSplit.length-1; y++){
-//				System.out.println(rowSplit[y] + "end");
 				if(rowSplit[y].equals(alive)) {
 					gen1[x][y] = Cell.ALIVE;
 					gen2[y][y] = Cell.ALIVE;
@@ -58,8 +56,6 @@ public class Logic {
 					ogGen[x][y] = Cell.DEAD;	
 				}
 				else {
-					System.out.println(Arrays.toString(rowSplit));
-					System.out.println(y + rowSplit[y] + "end");
 					// TODO throw exception as the file is not formatted correctly
 					System.err.println("not alive not dead what am i?");
 				}

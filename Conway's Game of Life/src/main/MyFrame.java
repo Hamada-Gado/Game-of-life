@@ -18,8 +18,8 @@ import state.State;
 @SuppressWarnings("serial")
 public class MyFrame extends JFrame {
 	
-	public JPanel current_state;
-	CardLayout cl;
+	JPanel current_state;
+	public CardLayout cl;
 	HashMap<State, BaseState> my_states;
 	
 	

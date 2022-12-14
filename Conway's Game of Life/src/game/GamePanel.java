@@ -39,7 +39,7 @@ public class GamePanel extends JPanel{
 		
 	}
 	
-	public void startGameThread() {
+	public void startGame() {
 		
 		logic.newGeneration();
 		state = State.PLAYING;
@@ -91,17 +91,13 @@ public class GamePanel extends JPanel{
 	
 	public void newGeneration(String alive, String dead, String delimiter, String data) {
 
-//		System.out.println(getSize());
 		logic.newGeneration(alive, dead, delimiter, data);
 		
 		width = logic.cols * cellSize;
 		height = logic.rows * cellSize;
-		System.out.println(height);
 		
 		setPreferredSize(new Dimension(this.width, this.height));
 		setSize(getPreferredSize());
-		
-//		System.out.println(getSize());
 	}
 	
 	public Cell[][] getCurrentGeneration() {
