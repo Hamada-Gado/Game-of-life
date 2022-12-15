@@ -1,9 +1,11 @@
 package state;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -12,11 +14,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -25,25 +30,24 @@ import game.GamePanel;
 import main.MyFrame;
 
 @SuppressWarnings("serial")
-public class GameState extends BaseState{
+public class GameState extends JPanel{
 
 	private GamePanel game_panel;
 	private JPanel utilites;
 	
-	private final int delayMin = 20, delayMax = 400;
-	
-	private final int GAME_STARTING_WIDTH = 500, GAME_STARTING_HEIGHT = 500;
+	private MyFrame master;
 	
 	public GameState(MyFrame master) {
-		super(master);
+		this.master = master;
 	
-		setLayout(new FlowLayout());
-		setBackground(Color.gray);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setBackground(Color.DARK_GRAY);
 		
-		game_panel = new GamePanel(GAME_STARTING_WIDTH, GAME_STARTING_HEIGHT);
+		game_panel = new GamePanel();
 
-		utilites = new JPanel(new GridBagLayout());
+		utilites = new JPanel(new FlowLayout());
 
+		utilites.setBackground(Color.gray);
 		// add pause and play button
 		utilites.add(new JButton("pause") {
 
@@ -119,7 +123,7 @@ public class GameState extends BaseState{
 		});
 
 		// add a slider to change game speed
-		utilites.add(new JSlider(delayMin, delayMax) {
+		utilites.add(new JSlider(game_panel.delayMin, game_panel.delayMax, game_panel.delay) {
 			{
 				setInverted(true);
 				addChangeListener(new ChangeListener() {
@@ -133,20 +137,12 @@ public class GameState extends BaseState{
 			}
 			
 		});
-		
+	
 		add(game_panel);
 		add(utilites);
-		
-		utilites.setSize(getPreferredSize());
-		
-		width = Math.max(GAME_STARTING_WIDTH, utilites.getWidth());
-		height = GAME_STARTING_HEIGHT + utilites.getHeight();
 	}
 
-	@Override
-	public void get_ready() {
-		super.get_ready();
-		
+	public void getReady() {	
 		game_panel.startGame();
 	}
 	
@@ -157,13 +153,13 @@ public class GameState extends BaseState{
 		// keep asking for response until exactly one character is given
 		// if canceled, exited, or pressed OK without input. set values to a default 
 		while(( alive = JOptionPane.showInputDialog("Enter a character for alive cells: ")) != null  && (alive.length() > 1));
-		alive = (alive == null || alive.length() == 0) ? "" + Cell.ALIVE.getValue() : alive;
+		alive = (alive != null && alive.length() == 0) ? "" + Cell.ALIVE.getValue() : alive;
 		
 		while(( dead = JOptionPane.showInputDialog("Enter a character for dead cells: ")) != null && (dead.length() > 1 || dead.equals(alive)));
-		dead = (dead == null || dead.length() == 0) ? "" + Cell.DEAD.getValue() : dead;
+		dead = (dead != null && dead.length() == 0) ? "" + Cell.DEAD.getValue() : dead;
 		
 		while(( delimiter = JOptionPane.showInputDialog("Enter a character for delimiter: ")) != null && (delimiter.length() > 1 || delimiter.equals(alive) || delimiter.equals(dead)));
-		delimiter = (delimiter == null || delimiter.length() == 0) ? " " : delimiter;
+		delimiter = (delimiter != null && delimiter.length() == 0) ? " " : delimiter;
 
 		return new String[] {alive, dead, delimiter};
 	}
@@ -175,6 +171,8 @@ public class GameState extends BaseState{
 		
 		String[] responses = getAliveDeadDelimiterValues();
 		String alive = responses[0], dead = responses[1], delimiter = responses[2];
+		
+		if(alive == null || dead == null || delimiter == null) return;
 		
 		// all read from the file
 		String strData = "";
@@ -208,6 +206,8 @@ public class GameState extends BaseState{
 
 		String[] responses = getAliveDeadDelimiterValues();
 		String alive = responses[0], dead = responses[1], delimiter = responses[2];	
+
+		if(alive == null || dead == null || delimiter == null) return;
 		
 		// write the file and save it
 		try (FileWriter writer = new FileWriter(fileChooser.getSelectedFile().getAbsolutePath())) {

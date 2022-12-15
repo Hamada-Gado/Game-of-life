@@ -1,9 +1,12 @@
 package game;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,25 +28,22 @@ public class GamePanel extends JPanel{
 	private State state;
 	
 	private Timer timer;
-	private int delay;
+	public int delay;
+	public final int delayMin = 20, delayMax = 400;
 	
-	private int width, height;
+	private final int width = 500, height = 500;
 	
-	public GamePanel(int width,int height){
-		// divide then multiply by cellSize so that if width or height is not divisible by cellSize
-		// screen is does not have extra space around it
-		
-		this.width = width/cellSize * cellSize;
-		this.height = height/cellSize * cellSize;
+	public GamePanel(){
 		logic = new Logic(this.width/cellSize, this.height/cellSize);
-		
+		delay = 165;
+	
+		setPreferredSize(new Dimension(width, height));
 	}
 	
 	public void startGame() {
 		
 		logic.newGeneration();
 		state = State.PLAYING;
-		delay = 165;
 		timer = new Timer(delay, new ActionListener() {
 			
 			@Override
@@ -55,9 +55,6 @@ public class GamePanel extends JPanel{
 		});
 
 		timer.start();
-		
-		setPreferredSize(new Dimension(width, height));
-		setSize(getPreferredSize());
 	}
 	
 	public boolean changeState() {
@@ -90,14 +87,8 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void newGeneration(String alive, String dead, String delimiter, String data) {
-
 		logic.newGeneration(alive, dead, delimiter, data);
-		
-		width = logic.cols * cellSize;
-		height = logic.rows * cellSize;
-		
-		setPreferredSize(new Dimension(this.width, this.height));
-		setSize(getPreferredSize());
+
 	}
 	
 	public Cell[][] getCurrentGeneration() {

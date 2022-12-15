@@ -1,11 +1,14 @@
 package main;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -20,7 +23,7 @@ public class MyFrame extends JFrame {
 	
 	JPanel current_state;
 	public CardLayout cl;
-	HashMap<State, BaseState> my_states;
+	HashMap<State, JComponent> my_states;
 	
 	
 	MyFrame() {
@@ -29,9 +32,8 @@ public class MyFrame extends JFrame {
 		setResizable(false);
 		setTitle("Conway's Game of Life");
 		
-		
 		// Set the panels
-		my_states = new HashMap<State, BaseState>();
+		my_states = new HashMap<State, JComponent>();
 		my_states.put(State.START_STATE, new StartState(this));
 		my_states.put(State.GAME_STATE, new GameState(this));
 		
@@ -43,7 +45,6 @@ public class MyFrame extends JFrame {
 		cl = (CardLayout) current_state.getLayout();
 		
 		// show first panel
-		my_states.get(State.START_STATE).get_ready();
 		cl.show(current_state, State.START_STATE.getValue());
 
 		// to exit the application click escape
@@ -68,18 +69,17 @@ public class MyFrame extends JFrame {
 		// Add components to frame and make it visible
 		add(current_state);
 		pack();
+		
 		setLocationRelativeTo(null);
 		setFocusable(true);
 		setVisible(true);
 	}
 
-	public void stateChanged(State state) {
-		BaseState next_state = my_states.get(state);
-		next_state.get_ready();
+	public void stateChange(State state) {
+		if(state == State.GAME_STATE)
+			((GameState)my_states.get(state)).getReady();;
 		
-		current_state.setPreferredSize(new Dimension(next_state.width, next_state.height));
 		cl.show(current_state, state.getValue());
-		
 		pack();
 	}
 

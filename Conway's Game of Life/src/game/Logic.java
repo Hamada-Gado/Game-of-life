@@ -6,16 +6,12 @@ import java.util.Random;
 import debug.Debug;
 
 public class Logic {
-	
-	// simply pointers to which generation to use
+
+	// change between generations so cells are not affected be the change of its neighbors
 	Cell[][] current_generation;
 	private Cell[][] other_generation;
 	
-	// change between generations so cells are not affected be the change of its neighbors
-	private Cell[][] generation1;
-	private Cell[][] generation2;
-	
-	Cell[][] original_generation;
+	private Cell[][] original_generation;
 
 	int cols, rows;
 	private Random randGen;
@@ -26,8 +22,6 @@ public class Logic {
 		
 		current_generation = new Cell[cols][rows];
 		other_generation = new Cell[cols][rows];
-		generation1 = new Cell[cols][rows];
-		generation2 = new Cell[cols][rows];
 		original_generation = new Cell[cols][rows];
 		
 		randGen = new Random();
@@ -65,42 +59,33 @@ public class Logic {
 		cols = colSplit.length;
 		rows = rowSplit.length-1;
 		
-		generation1 = gen1;
-		generation2 = gen2;
+		current_generation = gen1;
+		other_generation = gen2;
 		original_generation = ogGen;
-		
-		current_generation = generation1;
-		other_generation = generation2;
 	}
 	
 	void newGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
 				if(randGen.nextInt(0, 6) == 0) {
-					generation1[x][y] = Cell.ALIVE;
-					generation2[x][y] = Cell.ALIVE;
+					current_generation[x][y] = Cell.ALIVE;
+					other_generation[x][y] = Cell.ALIVE;
 					original_generation[x][y] = Cell.ALIVE;
 				}
 				else {
-					generation1[x][y] = Cell.DEAD;
-					generation2[x][y] = Cell.DEAD;				
+					current_generation[x][y] = Cell.DEAD;
+					other_generation[x][y] = Cell.DEAD;			
 					original_generation[x][y] = Cell.DEAD;
 				}
 			}
-		
-		current_generation = generation1;
-		other_generation = generation2;
 	}
 	
 	void resetGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
-					generation1[x][y] = original_generation[x][y];
-					generation2[x][y] = original_generation[x][y];
+					current_generation[x][y] = original_generation[x][y];
+					other_generation[x][y] = original_generation[x][y];
 			}
-		
-		current_generation = generation1;
-		other_generation = generation2;
 	}
 	
 	void update() {
@@ -121,9 +106,9 @@ public class Logic {
 			}
 		}
 		
-		current_generation = (current_generation == generation1) ? generation2 : generation1;
-		other_generation = (current_generation == generation1) ? generation2 : generation1;
-		
+		Cell[][] tmp = current_generation;
+		current_generation = other_generation;
+		other_generation = tmp;		
 	}
 	
 	int number_of_neighbors(int x, int y) {

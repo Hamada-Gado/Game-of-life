@@ -5,20 +5,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import main.MyFrame;
 
 @SuppressWarnings("serial")
-public class StartState extends BaseState implements ActionListener{
+public class StartState extends JPanel implements ActionListener{
 	
 	private JButton start_button;
 	private JButton rules_button;
+	
+	private MyFrame master;
 
 	public StartState(MyFrame master) {
-		super(master);
+		this.master = master;
 		
-		width = 420;
-		height = 420;
 		setBackground(Color.red);
 		
 		// start button
@@ -37,10 +38,10 @@ public class StartState extends BaseState implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == start_button) {
-			master.stateChanged(State.GAME_STATE);
+			master.stateChange(State.GAME_STATE);
 		}
 		else if(e.getSource() == rules_button) {
-			master.stateChanged(State.RULES_STATE);
+			master.stateChange(State.RULES_STATE);
 		}
 		
 	}
