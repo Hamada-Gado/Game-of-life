@@ -31,10 +31,11 @@ public class GamePanel extends JPanel{
 	public int delay;
 	public final int delayMin = 20, delayMax = 400;
 	
-	private final int width = 500, height = 500;
+	private final int width = 840, height = 500;
 	
 	public GamePanel(){
 		logic = new Logic(this.width/cellSize, this.height/cellSize);
+		state = State.PLAYING;
 		delay = 165;
 	
 		setPreferredSize(new Dimension(width, height));
@@ -43,7 +44,6 @@ public class GamePanel extends JPanel{
 	public void startGame() {
 		
 		logic.newGeneration();
-		state = State.PLAYING;
 		timer = new Timer(delay, new ActionListener() {
 			
 			@Override
@@ -75,6 +75,10 @@ public class GamePanel extends JPanel{
 	public void changeDelay(int number) {
 		delay = number;
 		timer.setDelay(delay);
+	}
+	
+	public void stopGame() {
+		timer.stop();
 	}
 	
 	public void restartGeneration() {

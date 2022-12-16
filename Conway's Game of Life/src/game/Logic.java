@@ -1,9 +1,6 @@
 package game;
 
-import java.util.Arrays;
 import java.util.Random;
-
-import debug.Debug;
 
 public class Logic {
 
@@ -67,7 +64,7 @@ public class Logic {
 	void newGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
-				if(randGen.nextInt(0, 6) == 0) {
+				if(randGen.nextInt(0, 2) == 0) {
 					current_generation[x][y] = Cell.ALIVE;
 					other_generation[x][y] = Cell.ALIVE;
 					original_generation[x][y] = Cell.ALIVE;
