@@ -12,6 +12,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import exception.LoadPatternException;
+
 enum State {
 	PLAYING,
 	PAUSED;
@@ -33,7 +35,6 @@ public class GamePanel extends JPanel implements MouseListener{
 	public final int DELAY_MIN = 20, DELAY_MAX = 400;
 	
 	private final int WIDTH = 840, HEIGHT = 500;
-	
 	
 	public GamePanel(){
 		state = State.PLAYING;
@@ -109,7 +110,7 @@ public class GamePanel extends JPanel implements MouseListener{
 		return logic.isEmpty;
 	}
 	
-	public void newGeneration(String alive, String dead, String delimiter, String data) {
+	public void newGeneration(String alive, String dead, String delimiter, String data) throws LoadPatternException {
 		logic.newGeneration(alive, dead, delimiter, data);
 
 	}

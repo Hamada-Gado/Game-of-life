@@ -1,6 +1,10 @@
 package game;
 
+import java.util.Arrays;
 import java.util.Random;
+
+import debug.Debug;
+import exception.LoadPatternException;
 
 public class Logic {
 
@@ -28,40 +32,35 @@ public class Logic {
 		randGen = new Random();
 	}
 	
-	void newGeneration(String alive, String dead, String delimiter, String data) {
+	void newGeneration(String alive, String dead, String delimiter, String data) throws LoadPatternException {
 
 		String[] colSplit = data.split("(\n)|(\r\n)"); // \n or \r\n to work one any os or manually typed patterns
 		String[] rowSplit = colSplit[0].split(delimiter);
 		
 		Cell[][] gen1 = new Cell[colSplit.length][rowSplit.length];
-		Cell[][] gen2 = new Cell[colSplit.length][rowSplit.length];
 		Cell[][] ogGen = new Cell[colSplit.length][rowSplit.length];
 		
 		for(int x = 0; x < colSplit.length; x++) {
 			rowSplit = colSplit[x].split(delimiter);
-			for(int y = 0; y < rowSplit.length-1; y++){
+			for(int y = 0; y < rowSplit.length; y++) {
 				if(rowSplit[y].equals(alive)) {
 					gen1[x][y] = Cell.ALIVE;
-					gen2[y][y] = Cell.ALIVE;
 					ogGen[x][y] = Cell.ALIVE;
 				}
 				else if(rowSplit[y].equals(dead)) {
 					gen1[x][y] = Cell.DEAD;
-					gen2[y][y] = Cell.DEAD;
 					ogGen[x][y] = Cell.DEAD;	
 				}
 				else {
-					// TODO throw exception as the file is not formatted correctly
-					System.err.println("not alive not dead what am i?");
+					throw new LoadPatternException("An error occured. The file might not be formatted correctly");
 				}
 			}
 		}
 		
 		cols = colSplit.length;
-		rows = rowSplit.length-1;
+		rows = rowSplit.length;
 		
 		current_generation = gen1;
-		other_generation = gen2;
 		original_generation = ogGen;
 	}
 	

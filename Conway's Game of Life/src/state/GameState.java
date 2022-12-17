@@ -21,6 +21,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import exception.LoadPatternException;
 import game.Cell;
 import game.GamePanel;
 import main.MyFrame;
@@ -260,7 +261,11 @@ public class GameState extends JPanel{
 			e.printStackTrace();
 		}
 		
-		game_panel.newGeneration(alive, dead, delimiter, strData);
+		try {
+			game_panel.newGeneration(alive, dead, delimiter, strData);
+		} catch (LoadPatternException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	private void saveOriginalGeneration() {
