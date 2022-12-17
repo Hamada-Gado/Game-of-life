@@ -8,7 +8,10 @@ public class Logic {
 	Cell[][] current_generation;
 	private Cell[][] other_generation;
 	
-	private Cell[][] original_generation;
+	// store first pattern
+	Cell[][] original_generation;
+
+	boolean isEmpty;
 
 	int cols, rows;
 	private Random randGen;
@@ -21,6 +24,7 @@ public class Logic {
 		other_generation = new Cell[cols][rows];
 		original_generation = new Cell[cols][rows];
 		
+		isEmpty = false;
 		randGen = new Random();
 	}
 	
@@ -62,6 +66,7 @@ public class Logic {
 	}
 	
 	void newGeneration() {
+		
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
 				if(randGen.nextInt(0, 2) == 0) {
@@ -77,11 +82,19 @@ public class Logic {
 			}
 	}
 	
+	void newEmptyGeneration() {
+		for(int x = 0;  x < cols; x++)
+			for(int y = 0; y < rows; y++) {
+				current_generation[x][y] = Cell.DEAD;
+				other_generation[x][y] = Cell.DEAD;			
+				original_generation[x][y] = Cell.DEAD;
+			}
+	}
+	
 	void resetGeneration() {
 		for(int x = 0; x < cols; x++)
 			for(int y = 0; y < rows; y++) {
 					current_generation[x][y] = original_generation[x][y];
-					other_generation[x][y] = original_generation[x][y];
 			}
 	}
 	
@@ -124,7 +137,4 @@ public class Logic {
 		}		
 		return sum;
 	}
-	
-	
-
 }

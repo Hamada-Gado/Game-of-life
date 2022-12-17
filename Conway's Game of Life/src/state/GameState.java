@@ -31,21 +31,19 @@ public class GameState extends JPanel{
 	// two main panels
 	private GamePanel game_panel;
 	private JPanel utilites;
-	
-	private MyFrame master;
-	
+	private final Color BG_UTILITES = Color.DARK_GRAY;
+
 	// Initialize all icons
 	private ImageIcon PLAY_ICON;
 	private ImageIcon PAUSE_ICON;
 	private ImageIcon STOP_ICON;
+	private ImageIcon NEW_ICON;
 	private ImageIcon SHUFFLE_ICON;
 	private ImageIcon REPEAT_ICON;
 	private ImageIcon EJECT_ICON;
 	private ImageIcon INSERT_ICON;
 	
 	public GameState(MyFrame master) {
-		this.master = master;
-		
 		try{
 			loadIcons();
 		}
@@ -54,17 +52,16 @@ public class GameState extends JPanel{
 		}
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		setBackground(Color.DARK_GRAY);
 		
 		game_panel = new GamePanel();
 
 		utilites = new JPanel(new FlowLayout());
-		utilites.setBackground(Color.gray);
+		utilites.setBackground(BG_UTILITES);
 		
 		// add pause and play button
 		utilites.add(new JButton(PAUSE_ICON) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -73,8 +70,7 @@ public class GameState extends JPanel{
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						boolean resualt = game_panel.changeState();
-						if(resualt)
+						if(game_panel.changeState())
 							setIcon(PLAY_ICON);							
 						else
 							setIcon(PAUSE_ICON);
@@ -85,8 +81,9 @@ public class GameState extends JPanel{
 		
 		// add new button to stop the game and return to main menu
 		utilites.add(new JButton(STOP_ICON) {
+			
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -103,9 +100,9 @@ public class GameState extends JPanel{
 		});
 		
 		// add new button to create new generation
-		utilites.add(new JButton(SHUFFLE_ICON) {
+		utilites.add(new JButton(NEW_ICON) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -114,8 +111,10 @@ public class GameState extends JPanel{
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						game_panel.newGeneration();
-						
+						if(game_panel.newGeneration())
+							setIcon(SHUFFLE_ICON);
+						else
+							setIcon(NEW_ICON);
 					}
 				});
 			}
@@ -124,7 +123,7 @@ public class GameState extends JPanel{
 		// add restart button to return to original generation
 		utilites.add(new JButton(REPEAT_ICON) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -143,7 +142,7 @@ public class GameState extends JPanel{
 		// add save button to save current generation
 		utilites.add(new JButton(EJECT_ICON) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -162,7 +161,7 @@ public class GameState extends JPanel{
 		// add load button to load a saved generation
 		utilites.add(new JButton(INSERT_ICON) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setBorderPainted(false);
 				setFocusable(false);
 				setContentAreaFilled(false);
@@ -179,9 +178,9 @@ public class GameState extends JPanel{
 		});
 
 		// add a slider to change game speed
-		utilites.add(new JSlider(game_panel.delayMin, game_panel.delayMax, game_panel.delay) {
+		utilites.add(new JSlider(game_panel.DELAY_MIN, game_panel.DELAY_MAX, game_panel.delay) {
 			{
-				setBackground(Color.gray);
+				setBackground(BG_UTILITES);
 				setInverted(true);
 				setFocusable(false);
 				
@@ -205,6 +204,7 @@ public class GameState extends JPanel{
 		PLAY_ICON		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-play-64.png")));
 		PAUSE_ICON 		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-pause-64.png")));
 		STOP_ICON 		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-stop-64.png")));
+		NEW_ICON		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-plus-64.png")));
 		SHUFFLE_ICON	= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-shuffle-64.png")));
 		REPEAT_ICON		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-repeat-64.png")));
 		EJECT_ICON 		= new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/res/icons8-eject-64.png")));
@@ -214,7 +214,6 @@ public class GameState extends JPanel{
 
 	public void getReady() {	
 		game_panel.startGame();
-		
 	}
 	
 	private String[] getAliveDeadDelimiterValues() {
@@ -222,14 +221,14 @@ public class GameState extends JPanel{
 		String alive, dead, delimiter;
 	
 		// keep asking for response until exactly one character is given
-		// if canceled, exited, or pressed OK without input. set values to a default 
+		// if pressed OK without input. set values to a default 
 		while(( alive = JOptionPane.showInputDialog("Enter a character for alive cells: ")) != null  && (alive.length() > 1));
 		alive = (alive != null && alive.length() == 0) ? "" + Cell.ALIVE.getValue() : alive;
 		
 		while(( dead = JOptionPane.showInputDialog("Enter a character for dead cells: ")) != null && (dead.length() > 1 || dead.equals(alive)));
 		dead = (dead != null && dead.length() == 0) ? "" + Cell.DEAD.getValue() : dead;
 		
-		while(( delimiter = JOptionPane.showInputDialog("Enter a character for delimiter: ")) != null && (delimiter.length() > 1 || delimiter.equals(alive) || delimiter.equals(dead)));
+		while(( delimiter = JOptionPane.showInputDialog("Enter a character for separator: ")) != null && (delimiter.length() > 1 || delimiter.equals(alive) || delimiter.equals(dead)));
 		delimiter = (delimiter != null && delimiter.length() == 0) ? " " : delimiter;
 
 		return new String[] {alive, dead, delimiter};
@@ -256,10 +255,8 @@ public class GameState extends JPanel{
 				intData = reader.read();				
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
