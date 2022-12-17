@@ -1,9 +1,7 @@
 package game;
 
-import java.util.Arrays;
 import java.util.Random;
 
-import debug.Debug;
 import exception.LoadPatternException;
 
 public class Logic {
