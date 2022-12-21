@@ -1,5 +1,3 @@
 /bin/
 
-src/debug
-
-patterns
+/src/debug
